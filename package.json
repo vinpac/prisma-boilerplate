@@ -9,7 +9,8 @@
     "generate": "npm -s run generate:prisma && npm -s run generate:nexus",
     "generate:prisma": "prisma generate",
     "generate:nexus": "ts-node -r tsconfig-paths/register --transpile-only src/schema",
-    "migrate": "prisma migrate dev --preview-feature --name",
+    "new:migration": "prisma migrate dev --preview-feature --name",
+    "migrate": "npx prisma migrate deploy --preview-feature",
     "studio": "prisma studio",
     "postinstall": "yarn generate"
   },
