@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model api_AppPath {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model api_SendGridEmailTemplate {
+  id         Int      @id @default(autoincrement())
+  name       String   @unique
+  templateId String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model AuthSession {
+  id          Int       @id @default(autoincrement())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  expiresAt   DateTime?
+  user        User      @relation(fields: [userId], references: [id])
+  userId      Int
+  hashedToken String
+  publicData  String?
+  privateData String?
+}
+
+model User {
+  id             Int           @id @default(autoincrement())
+  email          String        @unique
+  name           String?
+  posts          Post[]
+  emailConfirmed Boolean       @default(false)
+  profile        UserProfile?
+  logins         UserLogin[]
+  sessions       AuthSession[]
+
+  emailConfirmationRequests EmailConfirmationRequest[]
+  passwordRecoveryRequests  PasswordRecoveryRequest[]
+}
+
+model UserProfile {
+  userId      Int    @id
+  bio         String
+  displayName String
+  username    String
+  user        User   @relation(fields: [userId], references: [id])
+}
+
+model UserLogin {
+  userId Int    @id
+  name   String
+  value  String
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@unique([userId, name], name: "UserLogin_name_value_unique_constraint")
+}
+
+model EmailConfirmationRequest {
+  id          Int       @id @default(autoincrement())
+  token       String    @unique
+  confirmedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  user        User      @relation(fields: [userId], references: [id])
+  userId      Int
+}
+
+model PasswordRecoveryRequest {
+  id            Int       @id @default(autoincrement())
+  token         String    @unique
+  createdAt     DateTime  @default(now())
+  expiresAt     DateTime
+  invalidatedAt DateTime?
+  user          User      @relation(fields: [userId], references: [id])
+  userId        Int
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  title     String
+  content   String?
+  published Boolean  @default(false)
+  viewCount Int      @default(0)
+  author    User?    @relation(fields: [authorId], references: [id])
+  authorId  Int?
+}
