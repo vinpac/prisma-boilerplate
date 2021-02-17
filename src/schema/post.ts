@@ -184,17 +184,6 @@ export const Post = objectType({
     t.nonNull.boolean('published')
     t.nonNull.int('viewCount')
 
-    t.field('likedBy', {
-      type: list('Comment'),
-      resolve: (parent, _, context) => {
-        return context.prisma.post
-          .findUnique({
-            where: { id: parent.id || undefined },
-          })
-          .likedBy()
-      },
-    })
-
     t.field('comments', {
       type: list('Comment'),
       resolve: (parent, _, context) => {
