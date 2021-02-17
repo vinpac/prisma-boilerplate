@@ -2,18 +2,30 @@ import {
   arg,
   enumType,
   inputObjectType,
+  intArg,
+  list,
   mutationField,
   objectType,
-  stringArg,
+  queryField,
 } from 'nexus'
 
+export const feed = queryField('feed', {
+  type: list('Post'),
+  resolve: (_, __, ctx) => {
+    return ctx.prisma.post.findMany({
+      include: { author: true, comments: true, likedBy: true },
+      orderBy: [{ id: 'desc' }],
+      take: 25,
+    })
+  },
+})
 export const createDraft = mutationField('createDraft', {
   type: 'Post',
   args: {
     data: arg({
       type: 'PostCreateInput',
     }),
-    authorEmail: stringArg(),
+    userId: intArg(),
   },
   resolve: (_, args, context) => {
     return context.prisma.post.create({
@@ -21,10 +33,33 @@ export const createDraft = mutationField('createDraft', {
         title: args.data.title,
         content: args.data.content,
         author: {
-          connect: { email: args.authorEmail },
+          connect: { id: args.userId },
         },
       },
     })
+  },
+})
+
+export const likePost = mutationField('likePost', {
+  type: 'Boolean',
+  args: {
+    userId: intArg(),
+    postId: intArg(),
+  },
+  resolve: async (_, { postId, userId }, context) => {
+    await context.prisma.user.update({
+      data: {
+        likes: {
+          connect: {
+            id: postId,
+          },
+        },
+      },
+      where: {
+        id: userId,
+      },
+    })
+    return true
   },
 })
 
@@ -148,6 +183,29 @@ export const Post = objectType({
     t.string('content')
     t.nonNull.boolean('published')
     t.nonNull.int('viewCount')
+
+    t.field('likedBy', {
+      type: list('Comment'),
+      resolve: (parent, _, context) => {
+        return context.prisma.post
+          .findUnique({
+            where: { id: parent.id || undefined },
+          })
+          .likedBy()
+      },
+    })
+
+    t.field('comments', {
+      type: list('Comment'),
+      resolve: (parent, _, context) => {
+        return context.prisma.post
+          .findUnique({
+            where: { id: parent.id || undefined },
+          })
+          .comments()
+      },
+    })
+
     t.field('author', {
       type: 'User',
       resolve: (parent, _, context) => {

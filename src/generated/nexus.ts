@@ -4,7 +4,7 @@
  */
 
 
-import { Context } from "./../../dist/context.js"
+import { Context } from "./../context"
 import { core } from "nexus"
 declare global {
   interface NexusGenCustomInputMethods<TypeName extends string> {
@@ -61,6 +61,12 @@ export interface NexusGenScalars {
 }
 
 export interface NexusGenObjects {
+  Comment: { // root type
+    content: string; // String!
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    id: number; // Int!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
   Mutation: {};
   Post: { // root type
     content?: string | null; // String
@@ -90,16 +96,26 @@ export type NexusGenRootTypes = NexusGenObjects
 export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars & NexusGenEnums
 
 export interface NexusGenFieldTypes {
+  Comment: { // field return type
+    content: string; // String!
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    id: number; // Int!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
   Mutation: { // field return type
+    commentPost: NexusGenRootTypes['Comment']; // Comment!
     createDraft: NexusGenRootTypes['Post']; // Post!
+    likePost: boolean; // Boolean!
     login: string; // String!
     registerEmail: number; // Int!
   }
   Post: { // field return type
     author: NexusGenRootTypes['User'] | null; // User
+    comments: Array<NexusGenRootTypes['Comment'] | null> | null; // [Comment]
     content: string | null; // String
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     id: number; // Int!
+    likedBy: Array<NexusGenRootTypes['Comment'] | null> | null; // [Comment]
     published: boolean; // Boolean!
     title: string; // String!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
@@ -107,6 +123,7 @@ export interface NexusGenFieldTypes {
   }
   Query: { // field return type
     allUsers: NexusGenRootTypes['User'][]; // [User!]!
+    feed: NexusGenRootTypes['Post'][]; // [Post!]!
   }
   User: { // field return type
     email: string; // String!
@@ -117,16 +134,26 @@ export interface NexusGenFieldTypes {
 }
 
 export interface NexusGenFieldTypeNames {
+  Comment: { // field return type name
+    content: 'String'
+    createdAt: 'DateTime'
+    id: 'Int'
+    updatedAt: 'DateTime'
+  }
   Mutation: { // field return type name
+    commentPost: 'Comment'
     createDraft: 'Post'
+    likePost: 'Boolean'
     login: 'String'
     registerEmail: 'Int'
   }
   Post: { // field return type name
     author: 'User'
+    comments: 'Comment'
     content: 'String'
     createdAt: 'DateTime'
     id: 'Int'
+    likedBy: 'Comment'
     published: 'Boolean'
     title: 'String'
     updatedAt: 'DateTime'
@@ -134,6 +161,7 @@ export interface NexusGenFieldTypeNames {
   }
   Query: { // field return type name
     allUsers: 'User'
+    feed: 'Post'
   }
   User: { // field return type name
     email: 'String'
@@ -145,9 +173,18 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    commentPost: { // args
+      authorId: number; // Int!
+      content: string; // String!
+      postId: number; // Int!
+    }
     createDraft: { // args
-      authorEmail: string; // String!
       data: NexusGenInputs['PostCreateInput']; // PostCreateInput!
+      userId: number; // Int!
+    }
+    likePost: { // args
+      postId: number; // Int!
+      userId: number; // Int!
     }
     login: { // args
       email: string; // String!

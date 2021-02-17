@@ -2,13 +2,22 @@
 ### Do not make changes to this file directly
 
 
+type Comment {
+  content: String!
+  createdAt: DateTime!
+  id: Int!
+  updatedAt: DateTime!
+}
+
 """
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
 scalar DateTime
 
 type Mutation {
-  createDraft(authorEmail: String!, data: PostCreateInput!): Post!
+  commentPost(authorId: Int!, content: String!, postId: Int!): Comment!
+  createDraft(data: PostCreateInput!, userId: Int!): Post!
+  likePost(postId: Int!, userId: Int!): Boolean!
 
   """
   Generates a session token by email and password.
@@ -27,9 +36,11 @@ type Mutation {
 
 type Post {
   author: User
+  comments: [Comment]
   content: String
   createdAt: DateTime!
   id: Int!
+  likedBy: [Comment]
   published: Boolean!
   title: String!
   updatedAt: DateTime!
@@ -47,6 +58,7 @@ input PostOrderByUpdatedAtInput {
 
 type Query {
   allUsers: [User!]!
+  feed: [Post!]!
 }
 
 enum SortOrder {

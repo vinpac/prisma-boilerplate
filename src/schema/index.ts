@@ -3,8 +3,9 @@ import { GraphQLDateTime } from 'graphql-iso-date'
 import path from 'path'
 import * as post from '@schema/post'
 import * as user from '@schema/user'
+import * as comment from '@schema/comment'
 
-const fields = [post, user]
+const fields = [post, user, comment]
 
 const emptyDefinition = () => {}
 export const schema = makeSchema({

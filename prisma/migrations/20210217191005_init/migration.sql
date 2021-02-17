@@ -101,6 +101,24 @@ CREATE TABLE "Post" (
     PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "Comment" (
+    "id" SERIAL NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "content" TEXT NOT NULL,
+    "postId" INTEGER NOT NULL,
+    "authorId" INTEGER NOT NULL,
+
+    PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "_UserPostLikes" (
+    "A" INTEGER NOT NULL,
+    "B" INTEGER NOT NULL
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "api_AppPath.name_unique" ON "api_AppPath"("name");
 
@@ -122,6 +140,12 @@ CREATE UNIQUE INDEX "EmailConfirmationRequest.token_unique" ON "EmailConfirmatio
 -- CreateIndex
 CREATE UNIQUE INDEX "PasswordRecoveryRequest.token_unique" ON "PasswordRecoveryRequest"("token");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "_UserPostLikes_AB_unique" ON "_UserPostLikes"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_UserPostLikes_B_index" ON "_UserPostLikes"("B");
+
 -- AddForeignKey
 ALTER TABLE "AuthSession" ADD FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -139,3 +163,15 @@ ALTER TABLE "PasswordRecoveryRequest" ADD FOREIGN KEY ("userId") REFERENCES "Use
 
 -- AddForeignKey
 ALTER TABLE "Post" ADD FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Comment" ADD FOREIGN KEY ("postId") REFERENCES "Post"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Comment" ADD FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_UserPostLikes" ADD FOREIGN KEY ("A") REFERENCES "Post"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_UserPostLikes" ADD FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
