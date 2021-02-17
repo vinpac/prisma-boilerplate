@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken'
 export interface ConstantsEnv {
   JWT_SECRET: string
   SENDGRID_API_KEY: string
+  PORT: number
   SENDGRID_DEFAULT_SENDER: string
   JWT_ALGORITHM: jwt.Algorithm
   AUTHORIZED_DEFAULT_ROLE: string
@@ -23,6 +24,7 @@ export const {
   JWT_SECRET = required('JWT_SECRET is a required env'),
   JWT_ALGORITHM = 'HS512' as jwt.Algorithm,
   AUTHORIZED_DEFAULT_ROLE = 'user',
+  PORT = 4000,
   APP_URL = 'http://localhost:3000',
   HASURA_ENDPOINT = 'http://graphql-engine:8080/v1/graphql',
   HASURA_GRAPHQL_ADMIN_SECRET = 'myadminsecretkey',
