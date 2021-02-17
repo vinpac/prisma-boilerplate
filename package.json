@@ -10,7 +10,7 @@
     "generate:prisma": "prisma generate",
     "generate:nexus": "ts-node -r tsconfig-paths/register --transpile-only src/schema",
     "new:migration": "prisma migrate dev --preview-feature --name",
-    "migrate": "npx prisma migrate deploy --preview-feature",
+    "migrate": "prisma migrate deploy --preview-feature",
     "studio": "prisma studio",
     "postinstall": "yarn generate"
   },
