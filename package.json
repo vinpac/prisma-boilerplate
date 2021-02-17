@@ -3,14 +3,15 @@
   "license": "MIT",
   "scripts": {
     "dev": "ts-node-dev -r tsconfig-paths/register --no-notify --respawn --transpile-only src/server",
-    "start": "node dist/server -r tsconfig-paths/register",
+    "start": "node -r ./src/samba/ts-paths-production-bootstrap.js dist/server ",
     "clean": "rm -rf dist",
     "build": "npm -s run clean && npm -s run generate && tsc",
     "generate": "npm -s run generate:prisma && npm -s run generate:nexus",
     "generate:prisma": "prisma generate",
     "generate:nexus": "ts-node -r tsconfig-paths/register --transpile-only src/schema",
     "migrate": "prisma migrate dev --preview-feature --name",
-    "studio": "prisma studio"
+    "studio": "prisma studio",
+    "postinstall": "yarn generate"
   },
   "dependencies": {
     "@prisma/client": "^2.16.1",
