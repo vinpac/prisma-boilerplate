@@ -9,25 +9,23 @@ let CreateCommentTrend = new Trend('Create comment', true)
 let CreateLikeTrend = new Trend('Create like', true)
 
 export let options = {
-  vus: 40,
+  vus: 20,
   duration: '15s',
+}
+let headers = {
+  'Content-Type': 'application/json',
 }
 
 const SLEEP_DURATION = 0.1
 
 // const baseUrl = 'https://'
-const GRAPHQL_ENDPOINT = `https://${__ENV.API_URL}`
+const GRAPHQL_ENDPOINT = __ENV.API_URL
 const queries = {
   feed: `{
     feed {
       id
       content
       createdAt
-      comments {
-        id
-        content
-        updatedAt
-      }
       author {
         id
         email
@@ -48,26 +46,32 @@ const queries = {
     }
   `,
   createComment: `
-    mutation createComment ($authorId: Int!, $postId: Int!, $content: String!) {
-      comment: commentPost(authorId: $authorId, content: $content, postId:$postId) {
+    mutation createComment ($userId: Int!, $postId: Int!, $content: String!) {
+      comment: commentPost(authorId: $userId, content: $content, postId:$postId) {
         id
       }
     }`,
 }
 
+const q = (x) => http.post(GRAPHQL_ENDPOINT, JSON.stringify(x), { headers })
 export default function () {
   group('user flow', function () {
     // Get feed
-    let getFeedRes = http.posts(GRAPHQL_ENDPOINT, {
+    let getFeedRes = q({
       query: queries.feed,
     })
-    check(getFeedRes, { 'status was 200 (get feed)': (r) => r.status == 200 })
+
+    check(getFeedRes, {
+      'status was 200 (get feed)': (r) => {
+        return r.status == 200
+      },
+    })
     FeedTrend.add(getFeedRes.timings.duration)
 
     sleep(SLEEP_DURATION)
 
     // Create user
-    let createUserRes = http.post(GRAPHQL_ENDPOINT, {
+    let createUserRes = q({
       query: queries.signUp,
       variables: {
         email: `daniel+${Date.now()}+${__VU}@gmail.com`,
@@ -80,10 +84,15 @@ export default function () {
 
     sleep(SLEEP_DURATION)
 
-    let userId = JSON.parse(createUserRes.body).data.userId
+    const d = JSON.parse(createUserRes.body)
+    if (!d.data) {
+      console.error(d.errors[0])
+      throw new Error(d.errors[0].message)
+    }
+    let userId = d.data.userId
 
     // Create post
-    let createPostRes = http.post(GRAPHQL_ENDPOINT, {
+    let createPostRes = q({
       query: queries.createPost,
       variables: {
         userId,
@@ -98,7 +107,7 @@ export default function () {
     sleep(SLEEP_DURATION)
 
     // Create comment
-    let createCommentRes = http.post(GRAPHQL_ENDPOINT, {
+    let createCommentRes = q({
       query: queries.createComment,
       variables: {
         userId,
@@ -107,13 +116,20 @@ export default function () {
       },
     })
     check(createCommentRes, {
-      'status was 200 (add comment)': (r) => r.status == 200,
+      'status was 200 (add comment)': (r) => {
+        if (r.status !== 200) {
+          console.error(r.error)
+          console.error(r.body)
+        }
+
+        return true
+      },
     })
     CreateCommentTrend.add(createCommentRes.timings.duration)
 
     sleep(SLEEP_DURATION)
 
-    let createLikeRes = http.post(GRAPHQL_ENDPOINT, {
+    let createLikeRes = q({
       query: queries.likePost,
       variables: {
         userId,

@@ -115,7 +115,6 @@ export interface NexusGenFieldTypes {
     content: string | null; // String
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     id: number; // Int!
-    likedBy: Array<NexusGenRootTypes['Comment'] | null> | null; // [Comment]
     published: boolean; // Boolean!
     title: string; // String!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
@@ -153,7 +152,6 @@ export interface NexusGenFieldTypeNames {
     content: 'String'
     createdAt: 'DateTime'
     id: 'Int'
-    likedBy: 'Comment'
     published: 'Boolean'
     title: 'String'
     updatedAt: 'DateTime'
