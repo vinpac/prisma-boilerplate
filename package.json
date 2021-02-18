@@ -5,6 +5,7 @@
     "dev": "ts-node-dev -r tsconfig-paths/register --no-notify --respawn --transpile-only src/server",
     "start": "node -r ./src/samba/ts-paths-production-bootstrap.js dist/server ",
     "clean": "rm -rf dist",
+    "docker:entrypoint": "yarn migrate && yarn start",
     "build": "npm -s run clean && npm -s run generate && tsc",
     "generate": "npm -s run generate:prisma && npm -s run generate:nexus",
     "generate:prisma": "prisma generate",

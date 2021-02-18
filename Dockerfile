@@ -15,4 +15,4 @@ COPY ./tsconfig.json .
 COPY ./prisma .
 
 RUN ["yarn", "build"]
-CMD ["yarn", "migrate", "&&", "yarn", "start"]
+CMD ["yarn", "entrypoint"]
