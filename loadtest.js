@@ -2,6 +2,7 @@ import http from 'k6/http'
 import { check, sleep, group } from 'k6'
 import { Trend } from 'k6/metrics'
 
+let StatusTrend = new Trend('Status', true)
 let FeedTrend = new Trend('Get feed', true)
 let CreateUserTrend = new Trend('Create user', true)
 let CreatePostTrend = new Trend('Create post', true)
@@ -9,7 +10,7 @@ let CreateCommentTrend = new Trend('Create comment', true)
 let CreateLikeTrend = new Trend('Create like', true)
 
 export let options = {
-  vus: 20,
+  vus: 40,
   duration: '15s',
 }
 let headers = {
@@ -21,6 +22,7 @@ const SLEEP_DURATION = 0.1
 // const baseUrl = 'https://'
 const GRAPHQL_ENDPOINT = __ENV.API_URL
 const queries = {
+  status: `{ status }`,
   feed: `{
     feed {
       id
@@ -56,6 +58,20 @@ const queries = {
 const q = (x) => http.post(GRAPHQL_ENDPOINT, JSON.stringify(x), { headers })
 export default function () {
   group('user flow', function () {
+    // Get feed
+    let statusRes = q({
+      query: queries.status,
+    })
+
+    check(statusRes, {
+      'status was 200 (status)': (r) => {
+        return r.status == 200
+      },
+    })
+    StatusTrend.add(statusRes.timings.duration)
+
+    sleep(SLEEP_DURATION)
+
     // Get feed
     let getFeedRes = q({
       query: queries.feed,

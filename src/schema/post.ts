@@ -13,7 +13,7 @@ export const feed = queryField('feed', {
   type: list('Post'),
   resolve: (_, __, ctx) => {
     return ctx.prisma.post.findMany({
-      include: { author: true, comments: true, likedBy: true },
+      include: { author: true },
       orderBy: [{ id: 'desc' }],
       take: 25,
     })
