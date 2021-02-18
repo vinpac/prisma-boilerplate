@@ -15,7 +15,7 @@ const status = queryField('status', {
   type: 'Boolean',
   resolve: () => true,
 })
-const fields = [post, user, comment, status]
+const fields = [post, user, comment]
 
 const emptyDefinition = () => {}
 export const schema = makeSchema({
@@ -34,6 +34,7 @@ export const schema = makeSchema({
       },
       definition: emptyDefinition,
     }),
+    status,
 
     // Transforms the exported values of ./{module}.ts into an array of fields
     // We take the `post` object, for example, and make it as a Field[]

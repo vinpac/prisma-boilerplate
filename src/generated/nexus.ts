@@ -123,6 +123,7 @@ export interface NexusGenFieldTypes {
   Query: { // field return type
     allUsers: NexusGenRootTypes['User'][]; // [User!]!
     feed: NexusGenRootTypes['Post'][]; // [Post!]!
+    status: boolean; // Boolean!
   }
   User: { // field return type
     email: string; // String!
@@ -160,6 +161,7 @@ export interface NexusGenFieldTypeNames {
   Query: { // field return type name
     allUsers: 'User'
     feed: 'Post'
+    status: 'Boolean'
   }
   User: { // field return type name
     email: 'String'

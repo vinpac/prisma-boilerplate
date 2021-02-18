@@ -58,6 +58,7 @@ input PostOrderByUpdatedAtInput {
 type Query {
   allUsers: [User!]!
   feed: [Post!]!
+  status: Boolean!
 }
 
 enum SortOrder {
