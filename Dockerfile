@@ -6,7 +6,7 @@ WORKDIR /app
 COPY package.json .
 COPY yarn.lock .
 RUN yarn
-COPY ./src .
+COPY ./src ./src
 COPY ./tsconfig.json .
 COPY ./prisma .
 
