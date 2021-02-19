@@ -15,4 +15,4 @@ COPY ./tsconfig.json .
 COPY ./prisma .
 
 RUN ["yarn", "build"]
-CMD ["yarn", "entrypoint"]
+CMD ["yarn", "docker:entrypoint"]
