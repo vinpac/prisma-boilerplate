@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",
+    "esModuleInterop": true,
+    "lib": ["esnext"],
+    "strict": true,
+    "noImplicitReturns": true,
+    "baseUrl": "./src",
+    "incremental": true,
+    "paths": {
+      "@*": ["./*"]
+    }
+  },
+  "include": ["src/**/*", "test/**/*"]
+}
